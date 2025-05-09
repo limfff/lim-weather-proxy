@@ -11,7 +11,7 @@ export default function handler(req, res) {
   const v7Host = "mr487qncjq.re.qweatherapi.com";
   const geoHost = "geoapi.qweather.com";
   const pathV7 = `/v2/city/lookup?location=${encodeURIComponent(location)}&key=${key}`;
-  const pathGeo = `/v2/city/lookup?location=${encodeURIComponent(location)}&key=${key}`;
+  const pathGeo = `/geo/v2/city/lookup?location=${encodeURIComponent(location)}&key=${key}`;
 
   const tryFetch = (host, path, cb) => {
     https.get({ hostname: host, path, protocol: "https:" }, apiRes => {
