@@ -1,14 +1,22 @@
-export default async function handler(req, res) {
-  const { location } = req.query;                // e.g. "113.771797,22.998003"
+import https from 'https';
+
+export default function handler(req, res) {
+  const { location } = req.query;
   const key = process.env.WEATHER_KEY;
-  // 调用 QWeather 的 GeoAPI 获取城市信息
-  const url = `https://geoapi.qweather.com/v2/city/lookup?location=${location}&key=${key}`;
-  const response = await fetch(url);
-  if (!response.ok) {
-    // 直接把 QWeather 的错误透传给前端
-    const err = await response.json();
-    return res.status(response.status).json(err);
+  if (!location) {
+    return res.status(400).json({ error: { status: 400, type: "MISSING PARAMETER", detail: "location 参数必填" } });
   }
-  const data = await response.json();
-  res.status(200).json(data);
+
+  const url = `https://geoapi.qweather.com/v2/city/lookup?location=${encodeURIComponent(location)}&key=${key}`;
+
+  https.get(url, (apiRes) => {
+    let raw = "";
+    apiRes.on("data", chunk => raw += chunk);
+    apiRes.on("end", () => {
+      // 透传 QWeather 的 HTTP status 和 body
+      res.status(apiRes.statusCode || 200).json(JSON.parse(raw));
+    });
+  }).on("error", err => {
+    res.status(500).json({ error: { status: 500, type: "UNKNOWN ERROR", detail: err.message } });
+  });
 }
