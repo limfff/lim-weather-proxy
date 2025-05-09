@@ -7,7 +7,7 @@ export default function handler(req, res) {
     return res.status(400).json({ error: { status: 400, type: "MISSING PARAMETER", detail: "location 参数必填" } });
   }
 
-  const url = `https://geoapi.qweather.com/v2/city/lookup?location=${encodeURIComponent(location)}&key=${key}`;
+  const url = `https://mr487qncjq.re.qweatherapi.com/v2/city/lookup?location=${encodeURIComponent(location)}&key=${key}`;
 
   https.get(url, (apiRes) => {
     let raw = "";
